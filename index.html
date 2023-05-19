@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Bird</title>
+  <style>
+    #bird {
+      position: absolute;
+      width: 40px;
+      height: 30px;
+      background-color: yellow;
+      top: 50%;
+      left: 200px;
+    }
+
+    .pipe {
+      position: absolute;
+      width: 80px;
+      height: 300px;
+      background-color: green;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="bird"></div>
+  <script>
+    // Bird properties
+    var bird = document.getElementById("bird");
+    var birdTop = 220;
+    var gravity = 2;
+
+    // Pipe properties
+    var pipes = [];
+    var pipeInterval = 2000;
+
+    function jump() {
+      birdTop -= 40;
+    }
+
+    function gameLoop() {
+      // Update bird position
+      birdTop += gravity;
+      bird.style.top = birdTop + "px";
+
+      // Check collision
+      if (birdTop < 0 || birdTop > 450) {
+        alert("Game Over!");
+        clearInterval(gameInterval);
+      }
+
+      // Update pipe positions
+      for (var i = 0; i < pipes.length; i++) {
+        var pipe = pipes[i];
+        pipe.style.left = pipe.offsetLeft - 5 + "px";
+
+        // Check collision with pipes
+        if (
+          bird.offsetLeft + bird.offsetWidth > pipe.offsetLeft &&
+          bird.offsetLeft < pipe.offsetLeft + pipe.offsetWidth &&
+          bird.offsetTop < pipe.offsetHeight
+        ) {
+          alert("Game Over!");
+          clearInterval(gameInterval);
+        }
+
+        // Remove pipes when offscreen
+        if (pipe.offsetLeft < -80) {
+          pipe.parentNode.removeChild(pipe);
+          pipes.splice(i, 1);
+        }
+      }
+
+      // Create new pipe
+      if (pipes.length < 3) {
+        createPipe();
+      }
+    }
+
+    function createPipe() {
+      var pipe = document.createElement("div");
+      pipe.className = "pipe";
+      pipe.style.left = "400px";
+      document.body.appendChild(pipe);
+      pipes.push(pipe);
+    }
+
+    // Game loop interval
+    var gameInterval = setInterval(gameLoop, 20);
+
+    // Event listener for spacebar key to jump
+    document.addEventListener("keydown", function (event) {
+      if (event.code === "Space") {
+        jump();
+      }
+    });
+  </script>
+</body>
+</html> 
